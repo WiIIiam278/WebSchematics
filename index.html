@@ -22,7 +22,10 @@
                 canvas.remove();
             });
             const file = event.target.files[0];
-            renderSchematic(file, document.body, 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2');
+
+            // If there is a ./resources folder present, use that as teh endpoint for resources, otherwise use the default
+            const resources = window.location.href.includes('resources') ? './resources' : 'https://webschematics.github.io/resources';
+            renderSchematic(file, document.body, resources);
         });
     </script>
 </body>
