@@ -75,8 +75,13 @@ async function loadTexture(textureName) {
         textureName = textureName.substring(textureName.indexOf(":") + 1);
     }
     // Load the URL as a texture
+    const textureLoader = new THREE.TextureLoader();
     return new Promise((resolve, reject) => {
-        new THREE.TextureLoader().load(`${baseUrl}/assets/minecraft/textures/${textureName}.png`, resolve);
+        textureLoader.load(`${baseUrl}/assets/minecraft/textures/${textureName}.png`, (texture) => {
+            texture.minFilter = THREE.NearestFilter;
+            texture.magFilter = THREE.NearestFilter;
+            resolve(texture);
+        });       
     });
 }
 
