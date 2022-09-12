@@ -3,11 +3,14 @@ import { OrbitControls } from './lib/orbitcontrols.js'
 import loadModel from "./models.js";
 
 export default function render(blocks, width, height, length, parent, resources) {
+    const parentWidth = parent.clientWidth;
+    const parentHeight = parent.clientHeight;
+    console.log(parentWidth, parentHeight);
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, parentWidth / parentHeight, 0.1, 1000);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(parentWidth, parentHeight);
     parent.appendChild(renderer.domElement);
 
     const skippedBlocks = [];

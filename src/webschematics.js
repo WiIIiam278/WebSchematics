@@ -11,8 +11,8 @@ export default async function renderSchematic(file, parent, resources) {
 }
 
 async function readFile(file) {
-    return new Promise((resolve, reject) => {
-        var reader = new FileReader();
+    return new Promise((resolve) => {
+        const reader = new FileReader();
         reader.onload = function (event) {
             resolve(pako.inflate(event.target.result));
         }

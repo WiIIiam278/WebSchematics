@@ -15,7 +15,7 @@ export default async function loadModel(block, resources) {
     // Create a new group
     const group = new THREE.Group();
     // Iterate through each element in the model
-    for (const [key, value] of Object.entries(model.elements)) {
+    for (const [, value] of Object.entries(model.elements)) {
         // Scale vertices
         let from0 = value.from[0] / 16;
         let from1 = value.from[1] / 16;
@@ -93,7 +93,7 @@ async function loadTexture(textureName) {
     }
     // Load the URL as a texture
     const textureLoader = new THREE.TextureLoader();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         textureLoader.load(`${resourcesUrl}/assets/minecraft/textures/${textureName}.png`, (texture) => {
             texture.minFilter = THREE.NearestFilter;
             texture.magFilter = THREE.NearestFilter;
