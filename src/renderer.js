@@ -1,4 +1,5 @@
 import * as THREE from './lib/three.js';
+import { OrbitControls } from './lib/three-orbit.js'
 import loadModel from "./models.js";
 
 export default function render(blocks, width, height, length, parent) {
@@ -8,6 +9,8 @@ export default function render(blocks, width, height, length, parent) {
     const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     parent.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls( camera, renderer.domElement );
 
     for (let y = 0; y < blocks.length; y++) {
         for (let x = 0; x < blocks[y].length; x++) {
@@ -94,6 +97,8 @@ export default function render(blocks, width, height, length, parent) {
 
     const distance = Math.max(width, height, length) * 1.5;
     camera.position.set(0, height + (height / 3), 10);
+    camera.lookAt(width / 2, 0, length / 2);
+    controls.update();
 
     // Add a grid at the bottom of the scene
     const gridSize = Math.max(width, length);
@@ -105,9 +110,10 @@ export default function render(blocks, width, height, length, parent) {
         requestAnimationFrame(animate);
 
         // Rotate the camera around 0, 0
-        camera.position.x = width / 2 + (Math.cos(Date.now() / 1250) * distance);
-        camera.position.z = length / 2 + (Math.sin(Date.now() / 1250) * distance);
-        camera.lookAt(width / 2, 0, length / 2);
+        // camera.position.x = width / 2 + (Math.cos(Date.now() / 1250) * distance);
+        // camera.position.z = length / 2 + (Math.sin(Date.now() / 1250) * distance);
+
+        controls.update();
 
         renderer.render(scene, camera);
     };
