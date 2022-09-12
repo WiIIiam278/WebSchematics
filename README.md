@@ -4,7 +4,7 @@
 
 WebSchematics lets you render Minecraft schematic files in the web, completely in the browser. It uses `nbt.js` to parse the schematic and converts block models from a resource pack into `three.js` meshes, before assembling them into a scene.
 
-Still a work in progress, but it looks pretty neat! Check out the [live demo]—though note it only currently works with modern Sponge v3 (`.schem`) schematics.
+Still a work in progress, but it looks pretty neat! Check out the [live demo](https://wiiiiam278.github.io/WebSchematics/)—though note it only currently works with modern Sponge v3 (`.schem`) schematics, like the ones you can generate with WorldEdit.
 
 ## License
 WebSchematics is licensed under Apache-2.0. It uses the following libraries:
