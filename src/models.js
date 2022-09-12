@@ -14,18 +14,22 @@ export default async function loadModel(block, resources) {
     // Iterate through each element in the model
     for (const [key, value] of Object.entries(model["elements"])) {
         // Scale vertices
-        let to0 = value.to[0] / 16;
-        let to1 = value.to[1] / 16;
-        let to2 = value.to[2] / 16;
         let from0 = value.from[0] / 16;
         let from1 = value.from[1] / 16;
         let from2 = value.from[2] / 16;
+        let to0 = value.to[0] / 16;
+        let to1 = value.to[1] / 16;
+        let to2 = value.to[2] / 16;
         // Create a new box geometry
         const geometry = new THREE.BoxGeometry(to0 - from0, to1 - from1, to2 - from2);
         // Position geometry
         geometry.translate((to0 + from0) / 2, (to1 + from1) / 2, (to2 + from2) / 2);
         // Create mesh with resolved textures
-        const mesh = new THREE.Mesh(geometry, resolveTextures(value, textures));
+        const resolvedTextures = resolveTextures(value, textures);
+        if (resolvedTextures == null) {
+            continue;
+        }
+        const mesh = new THREE.Mesh(geometry, resolvedTextures);
         // Center the mesh in the group
         mesh.position.x -= 0.5;
         mesh.position.y -= 0.5;
@@ -113,7 +117,6 @@ function resolveTextures(element, textureMap) {
         if (textureMap[texture] !== undefined) {
             let textureImage = textureMap[texture];
 
-            console.log(data);
             // If data has a uv, crop the texture to match the four values
             if (data.uv !== undefined) {
                 let uv = data.uv;

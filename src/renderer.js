@@ -37,13 +37,11 @@ export default function render(blocks, width, height, length, parent, resources)
 
                     // Validate properties
                     if (properties) {
-                        // Get half property
+                        console.log(block.name + " has properties: " + properties);
+                        // Get if upside down
                         const half = properties.find(property => property.startsWith("half="));
-                        let flipped = false;
-                        if (half) {
-                            // Get the direction
-                            flipped = half.substring(5) === "top";
-                            model.rotation.x = flipped ? Math.PI : 0;
+                        if (half && half.substring(5) === "top") {
+                            model.rotation.x = Math.PI;
                         }
 
                         // Get facing property
@@ -51,19 +49,31 @@ export default function render(blocks, width, height, length, parent, resources)
                         if (facing) {
                             // Get the direction
                             const direction = facing.substring(7);
+                            // Rotate the model
                             switch (direction) {
                                 case "north":
-                                    model.rotation.y = Math.PI / 2;
+                                    model.rotation.y = -Math.PI / 2;
                                     break;
                                 case "east":
                                     model.rotation.y = 0;
                                     break;
                                 case "south":
-                                    model.rotation.y = -Math.PI / 2;
+                                    model.rotation.y = Math.PI / 2;
                                     break;
                                 case "west":
                                     model.rotation.y = Math.PI;
                                     break;
+                            }
+                        }
+
+                        // Get type property
+                        const type = properties.find(property => property.startsWith("type="));
+                        if (type) {
+                            // Get the type
+                            const typeValue = type.substring(5);
+                            // If type is top, move up 0.5
+                            if (typeValue === "top") {
+                                model.position.y += 0.5;
                             }
                         }
 
@@ -93,7 +103,7 @@ export default function render(blocks, width, height, length, parent, resources)
         }
     }
 
-    const controls = new OrbitControls( camera, renderer.domElement );
+    const controls = new OrbitControls(camera, renderer.domElement);
     camera.position.set(0, height + (height / 3), 10);
     controls.target.set(width / 2, 0, length / 2);
     controls.autoRotate = true;
