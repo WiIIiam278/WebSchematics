@@ -12,15 +12,19 @@
 </head>
 
 <body>
-    <script src="lib/three.js"></script>
-    <script src="lib/nbt.js"></script>
-    <script src="lib/pako.js"></script>
-    <script src="lib/lodash.js"></script>
-    <script src="loader.js"></script>
-    <script src="renderer.js"></script>
-    <script src="models.js"></script>
+    <input type="file" id="input" accept="schem">
+    <script type="module">
+        import renderSchematic from './src/webschematics.js';
 
-    <input type="file" onchange="renderSchematic(this.files[0])">
+        document.getElementById('input').addEventListener('change', (event) => {
+            // Remove any existing canvas elements
+            document.querySelectorAll('canvas').forEach((canvas) => {
+                canvas.remove();
+            });
+            const file = event.target.files[0];
+            renderSchematic(file, document.body);
+        });
+    </script>
 </body>
 
 </html>

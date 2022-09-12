@@ -1,4 +1,39 @@
+import * as THREE from './lib/three.js';
+import './lib/lodash.js';
+
 const baseUrl = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2';
+
+export default async function loadModel(block) {
+    // Load the model json
+    const model = await loadModelJson(block);
+    // Load the textures
+    const textures = await loadTextureMap(model["textures"]);
+    // Create a new group
+    const group = new THREE.Group();
+    // Iterate through each element in the model
+    for (const [key, value] of Object.entries(model["elements"])) {
+        // Scale vertices
+        let to0 = value.to[0] / 16;
+        let to1 = value.to[1] / 16;
+        let to2 = value.to[2] / 16;
+        let from0 = value.from[0] / 16;
+        let from1 = value.from[1] / 16;
+        let from2 = value.from[2] / 16;
+        // Create a new box geometry
+        const geometry = new THREE.BoxGeometry(to0 - from0, to1 - from1, to2 - from2);
+        // Position geometry
+        geometry.translate((to0 + from0) / 2, (to1 + from1) / 2, (to2 + from2) / 2);
+        // Create mesh with resolved textures
+        const mesh = new THREE.Mesh(geometry, resolveTextures(value, textures));
+        // Center the mesh in the group
+        mesh.position.x -= 0.5;
+        mesh.position.y -= 0.5;
+        mesh.position.z -= 0.5;
+        // Add the mesh to the group
+        group.add(mesh);
+    }
+    return group;
+}
 
 async function loadModelJson(block) {
     // If the model name contains minecraft:, remove it
@@ -93,36 +128,4 @@ function resolveTextures(element, textureMap) {
         }
     }
     return textureArray;
-}
-
-async function loadModel(block) {
-    // Load the model json
-    const model = await loadModelJson(block);
-    // Load the textures
-    const textures = await loadTextureMap(model["textures"]);
-    // Create a new group
-    const group = new THREE.Group();
-    // Iterate through each element in the model
-    for (const [key, value] of Object.entries(model["elements"])) {
-        // Scale vertices
-        let to0 = value.to[0] / 16;
-        let to1 = value.to[1] / 16;
-        let to2 = value.to[2] / 16;
-        let from0 = value.from[0] / 16;
-        let from1 = value.from[1] / 16;
-        let from2 = value.from[2] / 16;
-        // Create a new box geometry
-        const geometry = new THREE.BoxGeometry(to0 - from0, to1 - from1, to2 - from2);
-        // Position geometry
-        geometry.translate((to0 + from0) / 2, (to1 + from1) / 2, (to2 + from2) / 2);
-        // Create mesh with resolved textures
-        const mesh = new THREE.Mesh(geometry, resolveTextures(value, textures));
-        // Center the mesh in the group
-        mesh.position.x -= 0.5;
-        mesh.position.y -= 0.5;
-        mesh.position.z -= 0.5;
-        // Add the mesh to the group
-        group.add(mesh);
-    }
-    return group;
 }

@@ -1,10 +1,13 @@
-function render(blocks, width, height, length) {
+import * as THREE from './lib/three.js';
+import loadModel from "./models.js";
+
+export default function render(blocks, width, height, length, parent) {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    parent.appendChild(renderer.domElement);
 
     for (let y = 0; y < blocks.length; y++) {
         for (let x = 0; x < blocks[y].length; x++) {
