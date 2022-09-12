@@ -2,10 +2,10 @@ import * as THREE from './lib/three.js';
 import { OrbitControls } from './lib/orbitcontrols.js'
 import loadModel from "./models.js";
 
-export default function render(blocks, width, height, length, parent) {
+export default function render(blocks, width, height, length, parent, resources) {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    
+
     const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     parent.appendChild(renderer.domElement);
@@ -31,7 +31,7 @@ export default function render(blocks, width, height, length, parent) {
 
                 // Load the model
                 block.name = 'block/' + blockName;
-                loadModel(block).then(model => {
+                loadModel(block, resources).then(model => {
                     // Set the position of the model
                     model.position.set(x, y, z);
 

@@ -2,12 +2,12 @@ import './lib/nbt.js';
 import * as pako from './lib/pako.js';
 import render from './renderer.js';
 
-export default async function renderSchematic(file, parent) {
+export default async function renderSchematic(file, parent, resources) {
     const nbtData = await getNbtData(file);
     const width = nbtData.value.Width.value;
     const height = nbtData.value.Height.value;
     const length = nbtData.value.Length.value;
-    render(getBlocks(nbtData), width, height, length, parent);
+    render(getBlocks(nbtData), width, height, length, parent, resources);
 }
 
 async function readFile(file) {

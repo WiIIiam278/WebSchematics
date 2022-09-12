@@ -1,9 +1,10 @@
 import * as THREE from './lib/three.js';
 import './lib/lodash.js';
 
-const baseUrl = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2';
+let resourcesUrl = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2';
 
-export default async function loadModel(block) {
+export default async function loadModel(block, resources) {
+    resourcesUrl = resources;
     // Load the model json
     const model = await loadModelJson(block);
     // Load the textures
@@ -57,7 +58,7 @@ async function loadModelJson(block) {
         }
     }
     // Load the URL as a json object
-    const model = await fetch(`${baseUrl}/assets/minecraft/models/${modelName}.json`).then(response => response.json());
+    const model = await fetch(`${resourcesUrl}/assets/minecraft/models/${modelName}.json`).then(response => response.json());
     if (model["parent"] !== undefined) {
         // If the model has a parent, load the parent model
         const parentModel = await loadModelJson({
@@ -77,7 +78,7 @@ async function loadTexture(textureName) {
     // Load the URL as a texture
     const textureLoader = new THREE.TextureLoader();
     return new Promise((resolve, reject) => {
-        textureLoader.load(`${baseUrl}/assets/minecraft/textures/${textureName}.png`, (texture) => {
+        textureLoader.load(`${resourcesUrl}/assets/minecraft/textures/${textureName}.png`, (texture) => {
             texture.minFilter = THREE.NearestFilter;
             texture.magFilter = THREE.NearestFilter;
             resolve(texture);
