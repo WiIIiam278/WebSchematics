@@ -43,7 +43,6 @@ export default function render(blocks, width, height, length, parent) {
                             // Get the direction
                             flipped = half.substring(5) === "top";
                             model.rotation.x = flipped ? Math.PI : 0;
-                            //model.position.y += flipped ? 1 : 0;
                         }
 
                         // Get facing property
@@ -54,19 +53,33 @@ export default function render(blocks, width, height, length, parent) {
                             switch (direction) {
                                 case "north":
                                     model.rotation.y = Math.PI / 2;
-                                    //model.position.z += 1;
                                     break;
                                 case "east":
                                     model.rotation.y = 0;
                                     break;
                                 case "south":
                                     model.rotation.y = -Math.PI / 2;
-                                    //model.position.x += 1;
                                     break;
                                 case "west":
                                     model.rotation.y = Math.PI;
-                                    //model.position.x += 1;
-                                    //model.position.z += 1;
+                                    break;
+                            }
+                        }
+
+                        // Get axis property
+                        const axis = properties.find(property => property.startsWith("axis="));
+                        if (axis) {
+                            // Get the direction
+                            const direction = axis.substring(5);
+                            switch (direction) {
+                                case "x":
+                                    model.rotation.z = Math.PI / 2;
+                                    break;
+                                case "y":
+                                    model.rotation.y = 0;
+                                    break;
+                                case "z":
+                                    model.rotation.x = Math.PI / 2;
                                     break;
                             }
                         }
@@ -85,7 +98,7 @@ export default function render(blocks, width, height, length, parent) {
     // Add a grid at the bottom of the scene
     const gridSize = Math.max(width, length);
     const gridHelper = new THREE.GridHelper(gridSize, gridSize);
-    gridHelper.position.set(width / 2, 0, length / 2);
+    gridHelper.position.set((width / 2) - 0.5, -0.5, (length / 2) - 0.5);
     scene.add(gridHelper);
 
     function animate() {
