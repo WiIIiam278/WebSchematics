@@ -82,7 +82,7 @@ async function loadTexture(textureName) {
             texture.minFilter = THREE.NearestFilter;
             texture.magFilter = THREE.NearestFilter;
             resolve(texture);
-        });       
+        });
     });
 }
 
@@ -111,14 +111,28 @@ function resolveTextures(element, textureMap) {
             texture = texture.substring(1);
         }
         if (textureMap[texture] !== undefined) {
+            let textureImage = textureMap[texture];
+
+            console.log(data);
+            // If data has a uv, crop the texture to match the four values
+            if (data.uv !== undefined) {
+                let uv = data.uv;
+                let start = new THREE.Vector2(uv[0] / 16, uv[1] / 16);
+                let end = new THREE.Vector2(uv[2] / 16, uv[3] / 16);
+
+                // Apply uv to texture
+                textureImage.offset.set(start.x, start.y);
+                textureImage.repeat.set(end.x - start.x, end.y - start.y);
+            }
+            
             // If data has a tintindex, use the tinted texture
             if (data.tintindex !== undefined) {
                 textures[face] = new THREE.MeshBasicMaterial({
-                    map: textureMap[texture], transparent: true,
+                    map: textureImage, transparent: true,
                     color: new THREE.Color(`hsl(113, 100%, 40%)`)
                 });
             } else {
-                textures[face] = new THREE.MeshBasicMaterial({ map: textureMap[texture], transparent: true });
+                textures[face] = new THREE.MeshBasicMaterial({ map: textureImage, transparent: true });
             }
         }
     }
