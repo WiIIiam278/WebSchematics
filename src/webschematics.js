@@ -63,6 +63,7 @@ function getBlocks(nbtData) {
     const blockData = nbtData.value.BlockData.value;
 
     // Create a new 3d array
+    let skippedBlocks = [];
     let blocks = [];
     for (let y = 0; y < height; y++) {
         blocks[y] = [];
@@ -70,9 +71,17 @@ function getBlocks(nbtData) {
             blocks[y][x] = [];
             for (let z = 0; z < length; z++) {
                 const blockId = blockData[x + z * width + y * width * length];
-                blocks[y][x][z] = getBlockData(palette, blockId);
+                const data = getBlockData(palette, blockId);
+                if (data === undefined) {
+                    skippedBlocks.push(blockId);
+                    continue;
+                }
+                blocks[y][x][z] = data;
             }
         }
+    }
+    if (skippedBlocks.length > 0) {
+        console.warn("Failed to get block data for: " + skippedBlocks);
     }
     return blocks;
 }

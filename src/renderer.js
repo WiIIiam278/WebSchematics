@@ -10,6 +10,7 @@ export default function render(blocks, width, height, length, parent, resources)
     renderer.setSize(window.innerWidth, window.innerHeight);
     parent.appendChild(renderer.domElement);
 
+    const skippedBlocks = [];
     for (let y = 0; y < blocks.length; y++) {
         for (let x = 0; x < blocks[y].length; x++) {
             for (let z = 0; z < blocks[y][x].length; z++) {
@@ -32,15 +33,20 @@ export default function render(blocks, width, height, length, parent, resources)
                 // Load the model
                 block.name = 'block/' + blockName;
                 loadModel(block, resources).then(model => {
+                    if (model === null) {
+                        skippedBlocks.push(block);
+                        return;
+                    }
+                    
                     // Set the position of the model
                     model.position.set(x, y, z);
 
                     // Validate properties
                     if (properties) {
-                        console.log(block.name + " has properties: " + properties);
                         // Get if upside down
                         const half = properties.find(property => property.startsWith("half="));
-                        if (half && half.substring(5) === "top") {
+                        const upsideDown = half && half.substring(5) === "top";
+                        if (upsideDown) {
                             model.rotation.x = Math.PI;
                         }
 
@@ -52,16 +58,16 @@ export default function render(blocks, width, height, length, parent, resources)
                             // Rotate the model
                             switch (direction) {
                                 case "north":
-                                    model.rotation.y = -Math.PI / 2;
+                                    model.rotation.y += upsideDown ? -Math.PI / 2 : Math.PI / 2;
                                     break;
                                 case "east":
-                                    model.rotation.y = 0;
+                                    model.rotation.y += 0;
                                     break;
                                 case "south":
-                                    model.rotation.y = Math.PI / 2;
+                                    model.rotation.y += upsideDown ? Math.PI / 2 : -Math.PI / 2;
                                     break;
                                 case "west":
-                                    model.rotation.y = Math.PI;
+                                    model.rotation.y += upsideDown ? - Math.PI : Math.PI;
                                     break;
                             }
                         }
@@ -101,6 +107,9 @@ export default function render(blocks, width, height, length, parent, resources)
                 });
             }
         }
+    }
+    if (skippedBlocks.length > 0) {
+        console.log("Failed to render blocks: " + skippedBlocks);
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);

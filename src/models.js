@@ -7,12 +7,15 @@ export default async function loadModel(block, resources) {
     resourcesUrl = resources;
     // Load the model json
     const model = await loadModelJson(block);
+    if (model === undefined || model === null || model.elements === undefined) {
+        return null;
+    }
     // Load the textures
-    const textures = await loadTextureMap(model["textures"]);
+    const textures = await loadTextureMap(model.textures);
     // Create a new group
     const group = new THREE.Group();
     // Iterate through each element in the model
-    for (const [key, value] of Object.entries(model["elements"])) {
+    for (const [key, value] of Object.entries(model.elements)) {
         // Scale vertices
         let from0 = value.from[0] / 16;
         let from1 = value.from[1] / 16;
@@ -62,14 +65,23 @@ async function loadModelJson(block) {
         }
     }
     // Load the URL as a json object
-    const model = await fetch(`${resourcesUrl}/assets/minecraft/models/${modelName}.json`).then(response => response.json());
-    if (model["parent"] !== undefined) {
+    const model = await fetch(`${resourcesUrl}/assets/minecraft/models/${modelName}.json`).then(response => {
+        if (response.status === 200) {
+            return response.json();
+        }
+        throw new Error(`Failed to load model ${modelName}`);
+    }).catch(() => {
+        return undefined;
+    });
+    if (model && model["parent"] !== undefined) {
         // If the model has a parent, load the parent model
         const parentModel = await loadModelJson({
             name: model["parent"]
         });
         // Merge the parent model with the current model, adding
-        _.merge(model, parentModel);
+        if (parentModel) {
+            _.merge(model, parentModel);
+        }
     }
     return model;
 }
@@ -127,7 +139,7 @@ function resolveTextures(element, textureMap) {
                 textureImage.offset.set(start.x, start.y);
                 textureImage.repeat.set(end.x - start.x, end.y - start.y);
             }
-            
+
             // If data has a tintindex, use the tinted texture
             if (data.tintindex !== undefined) {
                 textures[face] = new THREE.MeshBasicMaterial({

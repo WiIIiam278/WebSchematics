@@ -23,8 +23,8 @@
             });
             const file = event.target.files[0];
 
-            // If there is a ./resources folder present, use that as teh endpoint for resources, otherwise use the default
-            const resources = window.location.href.includes('resources') ? './resources' : 'https://webschematics.github.io/resources';
+            // If there is a ./resources folder on disk, use that as teh endpoint for resources, otherwise use the default
+            const resources = window.location.href.includes('localhost') ? './resources' : 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.2';
             renderSchematic(file, document.body, resources);
         });
     </script>
