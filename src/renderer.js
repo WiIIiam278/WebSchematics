@@ -2,7 +2,8 @@ import * as THREE from './lib/three.js';
 import { OrbitControls } from './lib/orbitcontrols.js'
 import loadModel from "./models.js";
 
-export default function render(blocks, width, height, length, parent, resources) {
+export default async function render(blocks, width, height, length, parent, resources) {
+	const startTime = Date.now();
     const parentWidth = parent.clientWidth;
     const parentHeight = parent.clientHeight;
     console.log(parentWidth, parentHeight);
@@ -13,7 +14,7 @@ export default function render(blocks, width, height, length, parent, resources)
     renderer.setSize(parentWidth, parentHeight);
     parent.appendChild(renderer.domElement);
 
-    const skippedBlocks = [];
+    const skippedBlocks = {};
     for (let y = 0; y < blocks.length; y++) {
         for (let x = 0; x < blocks[y].length; x++) {
             for (let z = 0; z < blocks[y][x].length; z++) {
@@ -35,9 +36,10 @@ export default function render(blocks, width, height, length, parent, resources)
 
                 // Load the model
                 block.name = 'block/' + blockName;
-                loadModel(block, resources).then(model => {
+                await loadModel(block, resources).then(model => {
                     if (model === null) {
-                        skippedBlocks.push(block);
+                        if (!skippedBlocks[block.name]) skippedBlocks[block.name] = 0;
+						skippedBlocks[block.name]++;
                         return;
                     }
                     
@@ -111,9 +113,8 @@ export default function render(blocks, width, height, length, parent, resources)
             }
         }
     }
-    if (skippedBlocks.length > 0) {
-        console.log("Failed to render blocks: " + skippedBlocks);
-    }
+
+
 
     const controls = new OrbitControls(camera, renderer.domElement);
     camera.position.set(0, height + (height / 3), 10);
@@ -134,4 +135,5 @@ export default function render(blocks, width, height, length, parent, resources)
     };
 
     animate();
+	console.log("Rendered !", "\n- Skipped blocks: ", skippedBlocks, "\n- Time: ", (Date.now() - startTime)/1000, "s");
 }
