@@ -2,7 +2,8 @@ import './lib/nbt.js';
 import * as pako from './lib/pako.js';
 import render from './renderer.js';
 
-export default async function renderSchematic(file, parent, resources) {
+let resourcesUrl = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19.3';
+export default async function renderSchematic(file, parent, resources = resourcesUrl) {
     const nbtData = await getNbtData(file);
     const width = nbtData.value.Width.value;
     const height = nbtData.value.Height.value;
